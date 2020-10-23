@@ -7,10 +7,14 @@ import get from 'lodash/fp/get'
 import map from 'lodash/fp/map'
 import head from 'lodash/fp/head'
 import find from 'lodash/fp/find'
+import size from 'lodash/fp/size'
+import findIndex from 'lodash/fp/findIndex'
+import ArrowRightIcon from '@material-ui/icons/ArrowRight'
 
 const StyledQuiz = styled.div``
 
 const StyledWrapper = styled.div`
+  position: relative;
   width: 60%;
   height: 700px;
   margin: 10px auto;
@@ -25,12 +29,15 @@ const StyledWrapper = styled.div`
   }
 `
 
+const StyledQuestionNumber = styled.div``
+
 const StyledQuestion = styled.div`
   padding: 20px;
   text-align: center;
   font-size: 20px;
 
   @media (max-width: ${BREAKPOINTS.sm}) {
+    padding: 15px;
     font-size: 18px;
   }
 `
@@ -67,10 +74,20 @@ const StyledAnswer = styled.li`
   }
 
   @media (max-width: ${BREAKPOINTS.sm}) {
+    margin: 10px auto;
     font-size: 16px;
     height: 40px;
     width: 90%;
   }
+`
+
+const StyledNextButton = styled.div`
+  position: absolute;
+  bottom: 15px;
+  right: 20px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
 `
 
 const Quiz = () => {
@@ -92,6 +109,7 @@ const Quiz = () => {
     <StyledQuiz>
       <Header />
       <StyledWrapper>
+        <StyledQuestionNumber>{findIndex(question, QUESTIONS) + 1} / {size(QUESTIONS)}</StyledQuestionNumber>
         <StyledQuestion>{get('title', question)}</StyledQuestion>
         <StyledImage src={get('picture', question)} alt="Illustration de la question" />
         <StyledAnswers>
@@ -107,6 +125,7 @@ const Quiz = () => {
             </StyledAnswer>
           ,get('answers', question))}
         </StyledAnswers>
+        {showCorrection && <StyledNextButton>Question suivante <ArrowRightIcon /></StyledNextButton>}
       </StyledWrapper>
     </StyledQuiz>
   )
