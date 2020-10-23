@@ -15,16 +15,18 @@ const StyledQuiz = styled.div``
 
 const StyledWrapper = styled.div`
   position: relative;
-  width: 60%;
-  height: 700px;
+  width: 50%;
+  min-height: 700px;
+  height: fit-content;
   margin: 0px auto;
+  padding: 10px;
   border-radius: 20px;
   box-shadow: rgba(0, 0, 0, 0.9) 0px 2px 8px;
   text-align: center;
 
   @media (max-width: ${BREAKPOINTS.sm}) {
     width: 95%;
-    height: 500px;
+    min-height: 500px;
   }
 `
 
@@ -44,7 +46,7 @@ const StyledQuestion = styled.div`
 const StyledImage = styled.img`
   height: 250px;
 
-  @media (max-width: ${BREAKPOINTS.sm}) {
+  @media (max-width: ${BREAKPOINTS.md}) {
     width: 90%;
     height: auto;
   }
@@ -114,11 +116,7 @@ const Quiz = () => {
       setUserAnswer(undefined)
     }
   }
-  console.log("debug", {
-    showCorrection,
-    correctAnswer,
-    userAnswer
-  })
+
   return (
     <StyledQuiz>
       <Header />
