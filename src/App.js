@@ -1,11 +1,21 @@
 import React from 'react'
-import Header from './components/Header'
+import {
+  Route,
+  HashRouter as Router,
+  Switch
+} from 'react-router-dom'
+import { getPath } from './helpers/routes'
+import Home from './pages/Home'
+import Quiz from './pages/Quiz'
 
 function App() {
   return (
-    <div className="App">
-      <Header />
-    </div>
+    <Router>
+      <Switch>
+        <Route exact path={getPath('home')} component={Home}></Route>
+        <Route path={getPath('quiz')} component={Quiz}></Route>
+      </Switch>
+    </Router>
   )
 }
 
