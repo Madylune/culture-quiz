@@ -17,7 +17,7 @@ const StyledWrapper = styled.div`
   position: relative;
   width: 60%;
   height: 700px;
-  margin: 10px auto;
+  margin: 0px auto;
   border-radius: 20px;
   box-shadow: rgba(0, 0, 0, 0.9) 0px 2px 8px;
   text-align: center;
@@ -25,7 +25,6 @@ const StyledWrapper = styled.div`
   @media (max-width: ${BREAKPOINTS.sm}) {
     width: 95%;
     height: 500px;
-    margin: 0px auto;
   }
 `
 
@@ -70,7 +69,7 @@ const StyledAnswer = styled.li`
 
   cursor: pointer;
   &:hover {
-    background-color: ${COLORS.darkViolet};
+    background-color: ${props => props.showCorrection ? undefined : COLORS.darkViolet};
   }
 
   @media (max-width: ${BREAKPOINTS.sm}) {
@@ -91,27 +90,42 @@ const StyledNextButton = styled.div`
 `
 
 const Quiz = () => {
+  const [ currentQuestion, setCurrentQuestion ] = useState(head(QUESTIONS))
   const [ showCorrection, setShowCorrection ] = useState(false)
   const [ correctAnswer, setCorrectAnswer ] = useState(undefined)
   const [ userAnswer, setUserAnswer ] = useState(undefined)
 
-  const question = head(QUESTIONS)
   const onAnswerClick = useCallback(
     answer => {
       setShowCorrection(true)
       setUserAnswer(answer.id)
 
-      const _correctAnswer = find(answer => answer.isCorrect ,get('answers', question))
+      const _correctAnswer = find(answer => answer.isCorrect ,get('answers', currentQuestion))
       setCorrectAnswer(_correctAnswer.id)
-    }, [question])
+    }, [currentQuestion])
 
+  const nextQuestion = () => {
+    const nextQuestion = get(findIndex(currentQuestion, QUESTIONS) + 1, QUESTIONS)
+
+    if (nextQuestion) {
+      setCurrentQuestion(nextQuestion)
+      setShowCorrection(false)
+      setCorrectAnswer(undefined)
+      setUserAnswer(undefined)
+    }
+  }
+  console.log("debug", {
+    showCorrection,
+    correctAnswer,
+    userAnswer
+  })
   return (
     <StyledQuiz>
       <Header />
       <StyledWrapper>
-        <StyledQuestionNumber>{findIndex(question, QUESTIONS) + 1} / {size(QUESTIONS)}</StyledQuestionNumber>
-        <StyledQuestion>{get('title', question)}</StyledQuestion>
-        <StyledImage src={get('picture', question)} alt="Illustration de la question" />
+        <StyledQuestionNumber>{findIndex(currentQuestion, QUESTIONS) + 1} / {size(QUESTIONS)}</StyledQuestionNumber>
+        <StyledQuestion>{get('title', currentQuestion)}</StyledQuestion>
+        <StyledImage src={get('picture', currentQuestion)} alt="Illustration de la question" />
         <StyledAnswers>
           {map(answer => 
             <StyledAnswer 
@@ -123,9 +137,9 @@ const Quiz = () => {
             >
               {get('title', answer)}
             </StyledAnswer>
-          ,get('answers', question))}
+          ,get('answers', currentQuestion))}
         </StyledAnswers>
-        {showCorrection && <StyledNextButton>Question suivante <ArrowRightIcon /></StyledNextButton>}
+        {showCorrection && <StyledNextButton onClick={nextQuestion}>Question suivante <ArrowRightIcon /></StyledNextButton>}
       </StyledWrapper>
     </StyledQuiz>
   )
