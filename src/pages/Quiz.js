@@ -2,10 +2,13 @@ import React, { useState, useCallback } from 'react'
 import styled from 'styled-components'
 import Header from '../components/Header'
 import { QUESTIONS } from '../helpers/fixtures'
+import { COLORS, BREAKPOINTS } from '../helpers/theme'
 import get from 'lodash/fp/get'
 import map from 'lodash/fp/map'
 import head from 'lodash/fp/head'
 import find from 'lodash/fp/find'
+
+const StyledQuiz = styled.div``
 
 const StyledWrapper = styled.div`
   width: 60%;
@@ -14,16 +17,31 @@ const StyledWrapper = styled.div`
   border-radius: 20px;
   box-shadow: rgba(0, 0, 0, 0.9) 0px 2px 8px;
   text-align: center;
+
+  @media (max-width: ${BREAKPOINTS.sm}) {
+    width: 95%;
+    height: 500px;
+    margin: 0px auto;
+  }
 `
 
 const StyledQuestion = styled.div`
   padding: 20px;
   text-align: center;
   font-size: 20px;
+
+  @media (max-width: ${BREAKPOINTS.sm}) {
+    font-size: 18px;
+  }
 `
 
 const StyledImage = styled.img`
-  width: 90%;
+  height: 250px;
+
+  @media (max-width: ${BREAKPOINTS.sm}) {
+    width: 90%;
+    height: auto;
+  }
 `
 
 const StyledAnswers = styled.ul`
@@ -32,12 +50,12 @@ const StyledAnswers = styled.ul`
 `
 
 const StyledAnswer = styled.li`
-  background-color: ${props => props.showCorrection ? props.isCorrect ? '#21bb21' : props.userAnswer ? '#ff4040' : '#8a25b1' : '#8a25b1'};
+  background-color: ${props => props.showCorrection ? props.isCorrect ? COLORS.green : props.userAnswer ? COLORS.red : COLORS.violet : COLORS.violet};
   color: #fff;
   font-size: 18px;
   margin: 15px auto;
   height: 50px;
-  width: 60%;
+  width: 40%;
   border-radius: 40px;
   display: flex;
   align-items: center;
@@ -45,7 +63,13 @@ const StyledAnswer = styled.li`
 
   cursor: pointer;
   &:hover {
-    background-color: #5e1779;
+    background-color: ${COLORS.darkViolet};
+  }
+
+  @media (max-width: ${BREAKPOINTS.sm}) {
+    font-size: 16px;
+    height: 40px;
+    width: 90%;
   }
 `
 
@@ -65,7 +89,7 @@ const Quiz = () => {
     }, [question])
 
   return (
-    <div>
+    <StyledQuiz>
       <Header />
       <StyledWrapper>
         <StyledQuestion>{get('title', question)}</StyledQuestion>
@@ -84,7 +108,7 @@ const Quiz = () => {
           ,get('answers', question))}
         </StyledAnswers>
       </StyledWrapper>
-    </div>
+    </StyledQuiz>
   )
 }
 

@@ -1,8 +1,14 @@
 import React from 'react'
 import styled from 'styled-components'
+import { BREAKPOINTS } from '../helpers/theme'
 
 const StyledHeader = styled.header`
   height: 200px;
+
+  @media (max-width: ${BREAKPOINTS.sm}) {
+    height: 150px;
+    text-align: center;
+  }
 `
 
 const StyledLogo = styled.img`

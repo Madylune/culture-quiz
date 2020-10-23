@@ -3,6 +3,7 @@ import { withRouter } from 'react-router-dom'
 import styled from 'styled-components'
 import Header from '../components/Header'
 import { getPath } from '../helpers/routes'
+import { COLORS, BREAKPOINTS } from '../helpers/theme'
 
 const StyledText = styled.div`
   width: 80%;
@@ -13,11 +14,16 @@ const StyledText = styled.div`
     font-size: 22px;
     line-height: 30px;
     color: #383838;
+
+    @media (max-width: ${BREAKPOINTS.sm}) {
+      font-size: 16px;
+      line-height: 25px;
+    }
   }
 `
 
 const StyledPlay = styled.div`
-  background-color: #8a25b1;
+  background-color: ${COLORS.violet};
   border-radius: 40px;
   width: 300px;
   height: 80px;
@@ -30,7 +36,13 @@ const StyledPlay = styled.div`
   margin: 50px auto;
 
   &:hover {
-    background-color: #5e1779;
+    background-color: ${COLORS.darkViolet};
+  }
+
+  @media (max-width: ${BREAKPOINTS.sm}) {
+    width: 250px;
+    height: 50px;
+    line-height: 50px;
   }
 `
 
