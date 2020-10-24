@@ -72,8 +72,8 @@ const StyledAnswer = styled.li`
   align-items: center;
   justify-content: center;
   transition: 0.3s;
+  cursor: ${props => props.showCorrection ? 'default' : 'pointer'};
 
-  cursor: pointer;
   &:hover {
     background-color: ${props => props.showCorrection ? undefined : COLORS.darkViolet};
     transform: scale(${props => props.showCorrection ? undefined : 1.1});
@@ -163,7 +163,7 @@ const Quiz = ({ history }) => {
           {map(answer => 
             <StyledAnswer 
               key={get('id', answer)} 
-              onClick={() => onAnswerClick(answer)} 
+              onClick={() => !showCorrection && onAnswerClick(answer)} 
               isCorrect={correctAnswer === get('id', answer)} 
               showCorrection={showCorrection} 
               userAnswer={userAnswer === get('id', answer)}
