@@ -7,6 +7,7 @@ import {
 import { getPath } from './helpers/routes'
 import Home from './pages/Home'
 import Quiz from './pages/Quiz'
+import Results from './pages/Results'
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
       <Switch>
         <Route exact path={getPath('home')} component={Home}></Route>
         <Route path={getPath('quiz')} component={Quiz}></Route>
+        <Route path={getPath('results')} component={Results}></Route>
       </Switch>
     </Router>
   )

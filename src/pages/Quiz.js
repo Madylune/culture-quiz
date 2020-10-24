@@ -1,8 +1,10 @@
 import React, { useState, useCallback } from 'react'
+import { withRouter } from 'react-router-dom'
 import styled from 'styled-components'
 import Header from '../components/Header'
 import { QUESTIONS } from '../helpers/fixtures'
 import { COLORS, BREAKPOINTS } from '../helpers/theme'
+import { getPath } from '../helpers/routes'
 import get from 'lodash/fp/get'
 import map from 'lodash/fp/map'
 import head from 'lodash/fp/head'
@@ -44,12 +46,8 @@ const StyledQuestion = styled.div`
 `
 
 const StyledImage = styled.img`
-  height: 250px;
-
-  @media (max-width: ${BREAKPOINTS.md}) {
-    width: 90%;
-    height: auto;
-  }
+  height: auto;
+  width: 80%;
 `
 
 const StyledAnswers = styled.ul`
@@ -91,15 +89,21 @@ const StyledNextButton = styled.div`
   cursor: pointer;
 `
 
-const Quiz = () => {
+const Quiz = ({ history }) => {
   const [ currentQuestion, setCurrentQuestion ] = useState(head(QUESTIONS))
   const [ showCorrection, setShowCorrection ] = useState(false)
+  const [ showResults, setShowResults ] = useState(false)
   const [ correctAnswer, setCorrectAnswer ] = useState(undefined)
   const [ userAnswer, setUserAnswer ] = useState(undefined)
 
   const onAnswerClick = useCallback(
     answer => {
-      setShowCorrection(true)
+      if (findIndex(currentQuestion, QUESTIONS) + 1 === size(QUESTIONS)) {
+        setShowResults(true)
+      } else {
+        setShowCorrection(true)
+      }
+
       setUserAnswer(answer.id)
 
       const _correctAnswer = find(answer => answer.isCorrect ,get('answers', currentQuestion))
@@ -116,6 +120,8 @@ const Quiz = () => {
       setUserAnswer(undefined)
     }
   }
+
+  const goResults = () => history.push(getPath('results'))
 
   return (
     <StyledQuiz>
@@ -135,12 +141,13 @@ const Quiz = () => {
             >
               {get('title', answer)}
             </StyledAnswer>
-          ,get('answers', currentQuestion))}
+          , get('answers', currentQuestion))}
         </StyledAnswers>
         {showCorrection && <StyledNextButton onClick={nextQuestion}>Question suivante <ArrowRightIcon /></StyledNextButton>}
+        {showResults && <StyledNextButton onClick={goResults}>Résultats <ArrowRightIcon /></StyledNextButton>}
       </StyledWrapper>
     </StyledQuiz>
   )
 }
 
-export default Quiz
+export default withRouter(Quiz)

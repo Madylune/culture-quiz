@@ -4,6 +4,8 @@ export const getPath = (routeName, params = {}) => {
       return '/'
     case 'quiz':
       return '/quiz'
+    case 'results':
+      return '/results'
     default:
       return routeName
   }
