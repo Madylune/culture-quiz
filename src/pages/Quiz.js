@@ -1,17 +1,21 @@
 import React, { useState, useCallback } from 'react'
 import { withRouter } from 'react-router-dom'
+import { useSelector } from 'react-redux'
 import styled from 'styled-components'
 import Header from '../components/Header'
 import { QUESTIONS } from '../helpers/fixtures'
 import { COLORS, BREAKPOINTS } from '../helpers/theme'
 import { getPath } from '../helpers/routes'
 import get from 'lodash/fp/get'
+import getOr from 'lodash/fp/getOr'
 import map from 'lodash/fp/map'
 import head from 'lodash/fp/head'
 import find from 'lodash/fp/find'
 import size from 'lodash/fp/size'
 import findIndex from 'lodash/fp/findIndex'
 import ArrowRightIcon from '@material-ui/icons/ArrowRight'
+import { dispatch } from '../services/store'
+import { updateCurrentUser } from '../actions/currentUser'
 
 const StyledQuiz = styled.div``
 
@@ -96,6 +100,8 @@ const Quiz = ({ history }) => {
   const [ correctAnswer, setCorrectAnswer ] = useState(undefined)
   const [ userAnswer, setUserAnswer ] = useState(undefined)
 
+  const currentUser = useSelector(state => state.currentUser)
+
   const onAnswerClick = useCallback(
     answer => {
       if (findIndex(currentQuestion, QUESTIONS) + 1 === size(QUESTIONS)) {
@@ -105,10 +111,12 @@ const Quiz = ({ history }) => {
       }
 
       setUserAnswer(answer.id)
+      const userScore = answer.isCorrect ? 1 : 0
+      dispatch(updateCurrentUser({ score: getOr(0, 'score', currentUser) + userScore }))
 
       const _correctAnswer = find(answer => answer.isCorrect ,get('answers', currentQuestion))
       setCorrectAnswer(_correctAnswer.id)
-    }, [currentQuestion])
+    }, [currentQuestion, currentUser])
 
   const nextQuestion = () => {
     const nextQuestion = get(findIndex(currentQuestion, QUESTIONS) + 1, QUESTIONS)
