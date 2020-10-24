@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react'
+import React, { useState, useCallback, useEffect } from 'react'
 import { withRouter } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import styled from 'styled-components'
@@ -16,6 +16,7 @@ import findIndex from 'lodash/fp/findIndex'
 import ArrowRightIcon from '@material-ui/icons/ArrowRight'
 import { dispatch } from '../services/store'
 import { updateCurrentUser } from '../actions/currentUser'
+import { updateCurrentQuiz } from '../actions/quiz'
 
 const StyledQuiz = styled.div``
 
@@ -101,21 +102,23 @@ const Quiz = ({ history }) => {
   const [ userAnswer, setUserAnswer ] = useState(undefined)
 
   const currentUser = useSelector(state => state.currentUser)
+  const quiz = useSelector(state => state.quiz)
 
   const onAnswerClick = useCallback(
     answer => {
-      if (findIndex(currentQuestion, QUESTIONS) + 1 === size(QUESTIONS)) {
-        setShowResults(true)
-      } else {
-        setShowCorrection(true)
-      }
-
       setUserAnswer(answer.id)
       const userScore = answer.isCorrect ? 1 : 0
       dispatch(updateCurrentUser({ score: getOr(0, 'score', currentUser) + userScore }))
 
       const _correctAnswer = find(answer => answer.isCorrect ,get('answers', currentQuestion))
       setCorrectAnswer(_correctAnswer.id)
+      
+      setShowCorrection(true)
+
+      if (findIndex(currentQuestion, QUESTIONS) + 1 === size(QUESTIONS)) {
+        setShowResults(true)
+      }
+
     }, [currentQuestion, currentUser])
 
   const nextQuestion = () => {
@@ -126,16 +129,26 @@ const Quiz = ({ history }) => {
       setShowCorrection(false)
       setCorrectAnswer(undefined)
       setUserAnswer(undefined)
+
+      dispatch(updateCurrentQuiz({ currentQuestion: get('currentQuestion', quiz) + 1 }))
     }
   }
 
   const goResults = () => history.push(getPath('results'))
 
+  useEffect(() => {
+    const quiz = {
+      questions: QUESTIONS,
+      currentQuestion: 1
+    }
+    dispatch(updateCurrentQuiz(quiz))
+  }, [])
+
   return (
     <StyledQuiz>
       <Header />
       <StyledWrapper>
-        <StyledQuestionNumber>{findIndex(currentQuestion, QUESTIONS) + 1} / {size(QUESTIONS)}</StyledQuestionNumber>
+        <StyledQuestionNumber>{get('currentQuestion', quiz)} / {size(get('questions', quiz))}</StyledQuestionNumber>
         <StyledQuestion>{get('title', currentQuestion)}</StyledQuestion>
         <StyledImage src={get('picture', currentQuestion)} alt="Illustration de la question" />
         <StyledAnswers>
@@ -151,7 +164,7 @@ const Quiz = ({ history }) => {
             </StyledAnswer>
           , get('answers', currentQuestion))}
         </StyledAnswers>
-        {showCorrection && <StyledNextButton onClick={nextQuestion}>Question suivante <ArrowRightIcon /></StyledNextButton>}
+        {showCorrection && !showResults && <StyledNextButton onClick={nextQuestion}>Question suivante <ArrowRightIcon /></StyledNextButton>}
         {showResults && <StyledNextButton onClick={goResults}>Résultats <ArrowRightIcon /></StyledNextButton>}
       </StyledWrapper>
     </StyledQuiz>

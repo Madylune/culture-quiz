@@ -1,13 +1,13 @@
-import { UPDATE_CURRENT_USER, REMOVE_CURRENT_USER } from '../actions/currentUser.js'
+import { UPDATE_CURRENT_QUIZ, REMOVE_CURRENT_QUIZ } from '../actions/quiz.js'
 
 const reducer = (state = [], { type, payload }) => {
   switch (type) {
-    case UPDATE_CURRENT_USER:
+    case UPDATE_CURRENT_QUIZ:
       return {
         ...state,
         ...payload
       }
-    case REMOVE_CURRENT_USER:
+    case REMOVE_CURRENT_QUIZ:
       return {
         ...payload
       }
