@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import { BREAKPOINTS } from '../helpers/theme'
 
 const StyledHeader = styled.header`
-  height: 200px;
+  height: 180px;
 
   @media (max-width: ${BREAKPOINTS.sm}) {
     height: 150px;

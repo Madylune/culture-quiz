@@ -71,10 +71,12 @@ const StyledAnswer = styled.li`
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: 0.3s;
 
   cursor: pointer;
   &:hover {
     background-color: ${props => props.showCorrection ? undefined : COLORS.darkViolet};
+    transform: scale(${props => props.showCorrection ? undefined : 1.1});
   }
 
   @media (max-width: ${BREAKPOINTS.sm}) {
@@ -92,6 +94,12 @@ const StyledNextButton = styled.div`
   display: flex;
   align-items: center;
   cursor: pointer;
+  animation: back-and-forth 0.5s infinite alternate;
+  
+  @keyframes back-and-forth {
+    from { transform: translateX(0px); }
+    to { transform: translateX(-10px); }
+  }
 `
 
 const Quiz = ({ history }) => {

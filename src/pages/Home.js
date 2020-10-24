@@ -29,14 +29,17 @@ const StyledPlay = styled.div`
   height: 80px;
   line-height: 80px;
   text-align: center;
-  font-size: 20px;
+  font-size: 22px;
   font-weight: bold;
+  text-transform: uppercase;
   color: #fff;
   cursor: pointer;
   margin: 50px auto;
+  transition: 0.3s;
 
   &:hover {
     background-color: ${COLORS.darkViolet};
+    transform: scale(1.1);
   }
 
   @media (max-width: ${BREAKPOINTS.sm}) {
