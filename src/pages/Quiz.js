@@ -3,7 +3,6 @@ import { withRouter } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import styled from 'styled-components'
 import Header from '../components/Header'
-import { QUESTIONS } from '../helpers/fixtures'
 import { COLORS, BREAKPOINTS } from '../helpers/theme'
 import { getPath } from '../helpers/routes'
 import get from 'lodash/fp/get'
@@ -12,11 +11,14 @@ import map from 'lodash/fp/map'
 import head from 'lodash/fp/head'
 import find from 'lodash/fp/find'
 import size from 'lodash/fp/size'
-import findIndex from 'lodash/fp/findIndex'
+import shuffle from 'lodash/fp/shuffle'
+import take from 'lodash/fp/take'
 import ArrowRightIcon from '@material-ui/icons/ArrowRight'
 import { dispatch } from '../services/store'
 import { updateCurrentUser } from '../actions/currentUser'
 import { updateCurrentQuiz } from '../actions/quiz'
+import { QUIZ_API_URL } from '../services/api'
+import axios from 'axios'
 
 const StyledQuiz = styled.div``
 
@@ -32,8 +34,8 @@ const StyledWrapper = styled.div`
   text-align: center;
 
   @media (max-width: ${BREAKPOINTS.sm}) {
-    width: 95%;
-    min-height: 500px;
+    width: 90%;
+    min-height: 600px;
   }
 `
 
@@ -51,8 +53,8 @@ const StyledQuestion = styled.div`
 `
 
 const StyledImage = styled.img`
-  height: auto;
-  width: 80%;
+  max-height: 250px;
+  max-width: 80%;
 `
 
 const StyledAnswers = styled.ul`
@@ -66,7 +68,8 @@ const StyledAnswer = styled.li`
   font-size: 18px;
   margin: 15px auto;
   height: 50px;
-  width: 40%;
+  min-width: 40%;
+  max-width: 75%;
   border-radius: 40px;
   display: flex;
   align-items: center;
@@ -103,7 +106,7 @@ const StyledNextButton = styled.div`
 `
 
 const Quiz = ({ history }) => {
-  const [ currentQuestion, setCurrentQuestion ] = useState(head(QUESTIONS))
+  const [ currentQuestion, setCurrentQuestion ] = useState(undefined)
   const [ showCorrection, setShowCorrection ] = useState(false)
   const [ showResults, setShowResults ] = useState(false)
   const [ correctAnswer, setCorrectAnswer ] = useState(undefined)
@@ -117,64 +120,70 @@ const Quiz = ({ history }) => {
       setUserAnswer(answer.id)
       const userScore = answer.isCorrect ? 1 : 0
       dispatch(updateCurrentUser({ score: getOr(0, 'score', currentUser) + userScore }))
-
+      
       const _correctAnswer = find(answer => answer.isCorrect ,get('answers', currentQuestion))
       setCorrectAnswer(_correctAnswer.id)
-      
+
       setShowCorrection(true)
 
-      if (findIndex(currentQuestion, QUESTIONS) + 1 === size(QUESTIONS)) {
+      if (get('currentQuestionNb', quiz) === size(get('questions', quiz))) {
         setShowResults(true)
       }
 
-    }, [currentQuestion, currentUser])
+    }, [currentQuestion, currentUser, quiz])
 
   const nextQuestion = () => {
-    const nextQuestion = get(findIndex(currentQuestion, QUESTIONS) + 1, QUESTIONS)
+    dispatch(updateCurrentQuiz({ currentQuestionNb: get('currentQuestionNb', quiz) + 1 }))
 
+    const nextQuestion = get(['questions', quiz.currentQuestionNb], quiz)
     if (nextQuestion) {
       setCurrentQuestion(nextQuestion)
       setShowCorrection(false)
       setCorrectAnswer(undefined)
       setUserAnswer(undefined)
-
-      dispatch(updateCurrentQuiz({ currentQuestion: get('currentQuestion', quiz) + 1 }))
     }
   }
 
   const goResults = () => history.push(getPath('results'))
 
   useEffect(() => {
-    const quiz = {
-      questions: QUESTIONS,
-      currentQuestion: 1
-    }
-    dispatch(updateCurrentQuiz(quiz))
+    axios.get(QUIZ_API_URL).then(res => {
+      const results = get('data', res)
+      const sortedQuestion = shuffle(take(10, results))
+      const quizData = {
+        questions: sortedQuestion,
+        currentQuestionNb: 1
+      }
+      setCurrentQuestion(head(sortedQuestion))
+      quizData && dispatch(updateCurrentQuiz(quizData))
+    })
   }, [])
 
   return (
     <StyledQuiz>
       <Header />
-      <StyledWrapper>
-        <StyledQuestionNumber>{get('currentQuestion', quiz)} / {size(get('questions', quiz))}</StyledQuestionNumber>
-        <StyledQuestion>{get('title', currentQuestion)}</StyledQuestion>
-        <StyledImage src={get('picture', currentQuestion)} alt="Illustration de la question" />
-        <StyledAnswers>
-          {map(answer => 
-            <StyledAnswer 
-              key={get('id', answer)} 
-              onClick={() => !showCorrection && onAnswerClick(answer)} 
-              isCorrect={correctAnswer === get('id', answer)} 
-              showCorrection={showCorrection} 
-              userAnswer={userAnswer === get('id', answer)}
-            >
-              {get('title', answer)}
-            </StyledAnswer>
-          , get('answers', currentQuestion))}
-        </StyledAnswers>
-        {showCorrection && !showResults && <StyledNextButton onClick={nextQuestion}>Question suivante <ArrowRightIcon /></StyledNextButton>}
-        {showResults && <StyledNextButton onClick={goResults}>Résultats <ArrowRightIcon /></StyledNextButton>}
-      </StyledWrapper>
+      {currentQuestion && (
+        <StyledWrapper>
+        <StyledQuestionNumber>{get('currentQuestionNb', quiz)} / {size(get('questions', quiz))}</StyledQuestionNumber>
+          <StyledQuestion>{get('title', currentQuestion)}</StyledQuestion>
+          <StyledImage src={get('picture', currentQuestion)} alt="Illustration de la question" />
+          <StyledAnswers>
+            {map(answer => 
+              <StyledAnswer 
+                key={get('id', answer)} 
+                onClick={() => !showCorrection && onAnswerClick(answer)} 
+                isCorrect={correctAnswer === get('id', answer)} 
+                showCorrection={showCorrection} 
+                userAnswer={userAnswer === get('id', answer)}
+              >
+                {get('title', answer)}
+              </StyledAnswer>
+            , get('answers', currentQuestion))}
+          </StyledAnswers>
+          {showCorrection && !showResults && <StyledNextButton onClick={nextQuestion}>Question suivante <ArrowRightIcon /></StyledNextButton>}
+          {showResults && <StyledNextButton onClick={goResults}>Résultats <ArrowRightIcon /></StyledNextButton>}
+        </StyledWrapper>
+      )}
     </StyledQuiz>
   )
 }
