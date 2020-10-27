@@ -3,13 +3,13 @@ import { withRouter } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import styled from 'styled-components'
 import Header from '../components/Header'
-import { COLORS, BREAKPOINTS } from '../helpers/theme'
+import Answer from '../components/Answer'
+import { BREAKPOINTS } from '../helpers/theme'
 import { getPath } from '../helpers/routes'
 import get from 'lodash/fp/get'
 import getOr from 'lodash/fp/getOr'
 import map from 'lodash/fp/map'
 import head from 'lodash/fp/head'
-import find from 'lodash/fp/find'
 import size from 'lodash/fp/size'
 import shuffle from 'lodash/fp/shuffle'
 import take from 'lodash/fp/take'
@@ -62,34 +62,6 @@ const StyledAnswers = styled.ul`
   list-style-type: none;
 `
 
-const StyledAnswer = styled.li`
-  background-color: ${props => props.showCorrection ? props.isCorrect ? COLORS.green : props.userAnswer ? COLORS.red : COLORS.violet : COLORS.violet};
-  color: #fff;
-  font-size: 18px;
-  margin: 15px auto;
-  height: 50px;
-  min-width: 40%;
-  max-width: 75%;
-  border-radius: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: 0.3s;
-  cursor: ${props => props.showCorrection ? 'default' : 'pointer'};
-
-  &:hover {
-    background-color: ${props => props.showCorrection ? undefined : COLORS.darkViolet};
-    transform: scale(${props => props.showCorrection ? undefined : 1.1});
-  }
-
-  @media (max-width: ${BREAKPOINTS.sm}) {
-    margin: 10px auto;
-    font-size: 16px;
-    height: 40px;
-    width: 90%;
-  }
-`
-
 const StyledNextButton = styled.div`
   position: absolute;
   bottom: 15px;
@@ -107,9 +79,6 @@ const StyledNextButton = styled.div`
 
 const Quiz = ({ history }) => {
   const [ currentQuestion, setCurrentQuestion ] = useState(undefined)
-  const [ showCorrection, setShowCorrection ] = useState(false)
-  const [ showResults, setShowResults ] = useState(false)
-  const [ correctAnswer, setCorrectAnswer ] = useState(undefined)
   const [ userAnswer, setUserAnswer ] = useState(undefined)
 
   const currentUser = useSelector(state => state.currentUser)
@@ -120,17 +89,7 @@ const Quiz = ({ history }) => {
       setUserAnswer(answer.id)
       const userScore = answer.isCorrect ? 1 : 0
       dispatch(updateCurrentUser({ score: getOr(0, 'score', currentUser) + userScore }))
-      
-      const _correctAnswer = find(answer => answer.isCorrect ,get('answers', currentQuestion))
-      setCorrectAnswer(_correctAnswer.id)
-
-      setShowCorrection(true)
-
-      if (get('currentQuestionNb', quiz) === size(get('questions', quiz))) {
-        setShowResults(true)
-      }
-
-    }, [currentQuestion, currentUser, quiz])
+    }, [currentUser])
 
   const nextQuestion = () => {
     dispatch(updateCurrentQuiz({ currentQuestionNb: get('currentQuestionNb', quiz) + 1 }))
@@ -138,8 +97,6 @@ const Quiz = ({ history }) => {
     const nextQuestion = get(['questions', quiz.currentQuestionNb], quiz)
     if (nextQuestion) {
       setCurrentQuestion(nextQuestion)
-      setShowCorrection(false)
-      setCorrectAnswer(undefined)
       setUserAnswer(undefined)
     }
   }
@@ -159,6 +116,7 @@ const Quiz = ({ history }) => {
     })
   }, [])
 
+  const showResults = get('currentQuestionNb', quiz) === size(get('questions', quiz))
   return (
     <StyledQuiz>
       <Header />
@@ -169,19 +127,11 @@ const Quiz = ({ history }) => {
           <StyledImage src={get('picture', currentQuestion)} alt="Illustration de la question" />
           <StyledAnswers>
             {map(answer => 
-              <StyledAnswer 
-                key={get('id', answer)} 
-                onClick={() => !showCorrection && onAnswerClick(answer)} 
-                isCorrect={correctAnswer === get('id', answer)} 
-                showCorrection={showCorrection} 
-                userAnswer={userAnswer === get('id', answer)}
-              >
-                {get('title', answer)}
-              </StyledAnswer>
+              <Answer key={get('id', answer)} answer={answer} userAnswer={userAnswer} onAnswerClick={onAnswerClick} />
             , get('answers', currentQuestion))}
           </StyledAnswers>
-          {showCorrection && !showResults && <StyledNextButton onClick={nextQuestion}>Question suivante <ArrowRightIcon /></StyledNextButton>}
-          {showResults && <StyledNextButton onClick={goResults}>Résultats <ArrowRightIcon /></StyledNextButton>}
+          {userAnswer && !showResults && <StyledNextButton onClick={nextQuestion}>Question suivante <ArrowRightIcon /></StyledNextButton>}
+          {userAnswer && showResults && <StyledNextButton onClick={goResults}>Résultats <ArrowRightIcon /></StyledNextButton>}
         </StyledWrapper>
       )}
     </StyledQuiz>
