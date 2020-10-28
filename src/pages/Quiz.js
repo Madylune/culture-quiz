@@ -20,6 +20,8 @@ import { updateCurrentQuiz } from '../actions/quiz'
 import { QUIZ_API_URL } from '../services/api'
 import axios from 'axios'
 
+const TOTAL_QUESTIONS = 10
+
 const StyledQuiz = styled.div``
 
 const StyledWrapper = styled.div`
@@ -85,7 +87,7 @@ const Quiz = ({ history }) => {
   useEffect(() => {
     axios.get(QUIZ_API_URL).then(res => {
       const results = get('data', res)
-      const sortedQuestion = shuffle(take(3, results))
+      const sortedQuestion = shuffle(take(TOTAL_QUESTIONS, results))
       const quizData = {
         questions: sortedQuestion,
         currentQuestionNb: 1

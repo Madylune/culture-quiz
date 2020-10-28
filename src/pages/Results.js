@@ -5,7 +5,7 @@ import Header from '../components/Header'
 import get from 'lodash/fp/get'
 import getOr from 'lodash/fp/getOr'
 import size from 'lodash/fp/size'
-import { BREAKPOINTS } from '../helpers/theme'
+import { BREAKPOINTS, COLORS } from '../helpers/theme'
 
 const StyledCertificate = styled.div`
   width: 60%;
@@ -30,6 +30,13 @@ const StyledContent = styled.div`
 const StyledTitle = styled.h1`
   @media (max-width: ${BREAKPOINTS.xs}) {
     font-size: 20px;
+  }
+`
+
+const StyledSubtitle = styled.h2`
+  color: ${props => props.isBad ? COLORS.red : COLORS.green};
+  @media (max-width: ${BREAKPOINTS.xs}) {
+    font-size: 18px;
   }
 `
 
@@ -71,7 +78,7 @@ const Results = () => {
         <StyledCertificateImg src={require('../assets/certificate.png')} alt="Certificat" />
         <StyledContent>
           <StyledTitle>Ton score: {getOr(0, 'score', currentUser)} / {size(get('questions', quiz))}</StyledTitle>
-          <StyledTitle>{getGrading(getOr(0, 'score', currentUser))}</StyledTitle>
+          <StyledSubtitle isBad={getOr(0, 'score', currentUser) < 5}>{getGrading(getOr(0, 'score', currentUser))}</StyledSubtitle>
         </StyledContent>
       </StyledCertificate>
     </>
