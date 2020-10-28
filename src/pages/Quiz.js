@@ -6,6 +6,7 @@ import Header from '../components/Header'
 import Question from '../components/Question'
 import Anecdote from '../components/Anecdote'
 import Loader from '../components/Loader'
+import Timer from '../components/Timer'
 import { BREAKPOINTS } from '../helpers/theme'
 import { getPath } from '../helpers/routes'
 import get from 'lodash/fp/get'
@@ -23,7 +24,17 @@ import axios from 'axios'
 
 const TOTAL_QUESTIONS = 10
 
-const StyledQuiz = styled.div``
+const StyledQuiz = styled.div`
+  display: flex;
+
+  @media (max-width: ${BREAKPOINTS.sm}) {
+    flex-direction: column;
+  }
+`
+
+const StyledQuestion = styled.div`
+  width: 100%;
+`
 
 const StyledWrapper = styled.div`
   position: relative;
@@ -91,7 +102,8 @@ const Quiz = ({ history }) => {
       const sortedQuestion = shuffle(take(TOTAL_QUESTIONS, results))
       const quizData = {
         questions: sortedQuestion,
-        currentQuestionNb: 1
+        currentQuestionNb: 1,
+        timeIsOver: false
       }
       setCurrentQuestion(head(sortedQuestion))
       quizData && dispatch(updateCurrentQuiz(quizData))
@@ -103,16 +115,19 @@ const Quiz = ({ history }) => {
     <StyledQuiz>
       <Header />
       {currentQuestion ? (
-        <StyledWrapper>
-          {anecdote ? (
-            <Anecdote currentQuestion={currentQuestion} />
-          ) : (
-            <Question onAnswerClick={onAnswerClick} quiz={quiz} currentQuestion={currentQuestion} userAnswer={userAnswer} />
-          )}
-          {!anecdote && userAnswer && <StyledNextButton onClick={() => showAnecdote(true)}>Suite <ArrowRightIcon /></StyledNextButton>}
-          {anecdote && userAnswer && !showResults && <StyledNextButton onClick={nextQuestion}>Question suivante <ArrowRightIcon /></StyledNextButton>}
-          {anecdote && userAnswer && showResults && <StyledNextButton onClick={goResults}>Résultats <ArrowRightIcon /></StyledNextButton>}
-        </StyledWrapper>
+        <StyledQuestion>
+          {!anecdote && <Timer />}
+          <StyledWrapper>
+            {anecdote ? (
+              <Anecdote currentQuestion={currentQuestion} />
+            ) : (
+              <Question onAnswerClick={onAnswerClick} quiz={quiz} currentQuestion={currentQuestion} userAnswer={userAnswer} />
+            )}
+            {!anecdote && userAnswer && <StyledNextButton onClick={() => showAnecdote(true)}>Suite <ArrowRightIcon /></StyledNextButton>}
+            {anecdote && userAnswer && !showResults && <StyledNextButton onClick={nextQuestion}>Question suivante <ArrowRightIcon /></StyledNextButton>}
+            {anecdote && userAnswer && showResults && <StyledNextButton onClick={goResults}>Résultats <ArrowRightIcon /></StyledNextButton>}
+          </StyledWrapper>
+        </StyledQuestion>
       ) : <Loader />}
     </StyledQuiz>
   )

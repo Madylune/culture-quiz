@@ -6,7 +6,8 @@ const StyledLoader = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-top: 20px;
+  margin-top: 100px;
+  width: 100%;
 `
 
 const StyledSpinner = styled.div`
