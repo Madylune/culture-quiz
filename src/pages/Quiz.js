@@ -3,12 +3,12 @@ import { withRouter } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import styled from 'styled-components'
 import Header from '../components/Header'
-import Answer from '../components/Answer'
+import Question from '../components/Question'
+import Anecdote from '../components/Anecdote'
 import { BREAKPOINTS } from '../helpers/theme'
 import { getPath } from '../helpers/routes'
 import get from 'lodash/fp/get'
 import getOr from 'lodash/fp/getOr'
-import map from 'lodash/fp/map'
 import head from 'lodash/fp/head'
 import size from 'lodash/fp/size'
 import shuffle from 'lodash/fp/shuffle'
@@ -35,31 +35,8 @@ const StyledWrapper = styled.div`
 
   @media (max-width: ${BREAKPOINTS.sm}) {
     width: 90%;
-    min-height: 600px;
+    min-height: 560px;
   }
-`
-
-const StyledQuestionNumber = styled.div``
-
-const StyledQuestion = styled.div`
-  padding: 20px;
-  text-align: center;
-  font-size: 20px;
-
-  @media (max-width: ${BREAKPOINTS.sm}) {
-    padding: 15px;
-    font-size: 18px;
-  }
-`
-
-const StyledImage = styled.img`
-  max-height: 250px;
-  max-width: 80%;
-`
-
-const StyledAnswers = styled.ul`
-  padding: 0;
-  list-style-type: none;
 `
 
 const StyledNextButton = styled.div`
@@ -80,6 +57,7 @@ const StyledNextButton = styled.div`
 const Quiz = ({ history }) => {
   const [ currentQuestion, setCurrentQuestion ] = useState(undefined)
   const [ userAnswer, setUserAnswer ] = useState(undefined)
+  const [ anecdote, showAnecdote ] = useState(false)
 
   const currentUser = useSelector(state => state.currentUser)
   const quiz = useSelector(state => state.quiz)
@@ -98,6 +76,7 @@ const Quiz = ({ history }) => {
     if (nextQuestion) {
       setCurrentQuestion(nextQuestion)
       setUserAnswer(undefined)
+      showAnecdote(false)
     }
   }
 
@@ -106,7 +85,7 @@ const Quiz = ({ history }) => {
   useEffect(() => {
     axios.get(QUIZ_API_URL).then(res => {
       const results = get('data', res)
-      const sortedQuestion = shuffle(take(10, results))
+      const sortedQuestion = shuffle(take(3, results))
       const quizData = {
         questions: sortedQuestion,
         currentQuestionNb: 1
@@ -122,16 +101,14 @@ const Quiz = ({ history }) => {
       <Header />
       {currentQuestion && (
         <StyledWrapper>
-        <StyledQuestionNumber>{get('currentQuestionNb', quiz)} / {size(get('questions', quiz))}</StyledQuestionNumber>
-          <StyledQuestion>{get('title', currentQuestion)}</StyledQuestion>
-          <StyledImage src={get('picture', currentQuestion)} alt="Illustration de la question" />
-          <StyledAnswers>
-            {map(answer => 
-              <Answer key={get('id', answer)} answer={answer} userAnswer={userAnswer} onAnswerClick={onAnswerClick} />
-            , get('answers', currentQuestion))}
-          </StyledAnswers>
-          {userAnswer && !showResults && <StyledNextButton onClick={nextQuestion}>Question suivante <ArrowRightIcon /></StyledNextButton>}
-          {userAnswer && showResults && <StyledNextButton onClick={goResults}>Résultats <ArrowRightIcon /></StyledNextButton>}
+          {anecdote ? (
+            <Anecdote currentQuestion={currentQuestion} />
+          ) : (
+            <Question onAnswerClick={onAnswerClick} quiz={quiz} currentQuestion={currentQuestion} userAnswer={userAnswer} />
+          )}
+          {!anecdote && userAnswer && <StyledNextButton onClick={() => showAnecdote(true)}>Suite <ArrowRightIcon /></StyledNextButton>}
+          {anecdote && userAnswer && !showResults && <StyledNextButton onClick={nextQuestion}>Question suivante <ArrowRightIcon /></StyledNextButton>}
+          {anecdote && userAnswer && showResults && <StyledNextButton onClick={goResults}>Résultats <ArrowRightIcon /></StyledNextButton>}
         </StyledWrapper>
       )}
     </StyledQuiz>
