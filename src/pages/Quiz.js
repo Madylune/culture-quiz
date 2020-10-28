@@ -5,6 +5,7 @@ import styled from 'styled-components'
 import Header from '../components/Header'
 import Question from '../components/Question'
 import Anecdote from '../components/Anecdote'
+import Loader from '../components/Loader'
 import { BREAKPOINTS } from '../helpers/theme'
 import { getPath } from '../helpers/routes'
 import get from 'lodash/fp/get'
@@ -101,7 +102,7 @@ const Quiz = ({ history }) => {
   return (
     <StyledQuiz>
       <Header />
-      {currentQuestion && (
+      {currentQuestion ? (
         <StyledWrapper>
           {anecdote ? (
             <Anecdote currentQuestion={currentQuestion} />
@@ -112,7 +113,7 @@ const Quiz = ({ history }) => {
           {anecdote && userAnswer && !showResults && <StyledNextButton onClick={nextQuestion}>Question suivante <ArrowRightIcon /></StyledNextButton>}
           {anecdote && userAnswer && showResults && <StyledNextButton onClick={goResults}>Résultats <ArrowRightIcon /></StyledNextButton>}
         </StyledWrapper>
-      )}
+      ) : <Loader />}
     </StyledQuiz>
   )
 }
