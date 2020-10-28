@@ -1,14 +1,17 @@
 import React from 'react'
+import { withRouter } from 'react-router-dom'
 import styled from 'styled-components'
 import { useSelector } from 'react-redux'
 import Header from '../components/Header'
+import Button from '../components/Button'
 import get from 'lodash/fp/get'
 import getOr from 'lodash/fp/getOr'
 import size from 'lodash/fp/size'
 import { BREAKPOINTS, COLORS } from '../helpers/theme'
+import { getPath } from '../helpers/routes'
 
 const StyledCertificate = styled.div`
-  width: 60%;
+  width: 40%;
   margin: auto;
   position: relative;
 
@@ -68,7 +71,7 @@ const getGrading = score => {
   }
 }
 
-const Results = () => {
+const Results = ({ history }) => {
   const currentUser = useSelector(state => state.currentUser)
   const quiz = useSelector(state => state.quiz)
   return (
@@ -81,8 +84,9 @@ const Results = () => {
           <StyledSubtitle isBad={getOr(0, 'score', currentUser) < 5}>{getGrading(getOr(0, 'score', currentUser))}</StyledSubtitle>
         </StyledContent>
       </StyledCertificate>
+      <Button onClick={() => history.push(getPath('quiz'))}>Relancer un quiz</Button>
     </>
   )
 }
 
-export default Results
+export default withRouter(Results)
