@@ -31,12 +31,12 @@ const StyledAnswer = styled.li`
   }
 `
 
-const Answer = ({ answer, userAnswer, onAnswerClick }) => {
+const Answer = ({ answer, userAnswer, onAnswerClick, showCorrection }) => {
   return (
     <StyledAnswer 
-      onClick={() => !userAnswer && onAnswerClick(answer)} 
+      onClick={() => !showCorrection && onAnswerClick(answer)} 
       isCorrect={get('isCorrect', answer)} 
-      showCorrection={userAnswer} 
+      showCorrection={showCorrection} 
       userAnswer={userAnswer === get('id', answer)}
     >
       {get('title', answer)}

@@ -41,7 +41,7 @@ const StyledWrapper = styled.div`
   width: 50%;
   min-height: 700px;
   height: fit-content;
-  margin: 0px auto;
+  margin: 20px auto 0;
   padding: 10px;
   border-radius: 20px;
   box-shadow: rgba(0, 0, 0, 0.9) 0px 2px 8px;
@@ -71,6 +71,7 @@ const StyledNextButton = styled.div`
 const Quiz = ({ history }) => {
   const [ currentQuestion, setCurrentQuestion ] = useState(undefined)
   const [ userAnswer, setUserAnswer ] = useState(undefined)
+  const [ correction, showCorrection ] = useState(false)
   const [ anecdote, showAnecdote ] = useState(false)
 
   const currentUser = useSelector(state => state.currentUser)
@@ -79,6 +80,7 @@ const Quiz = ({ history }) => {
   const onAnswerClick = useCallback(
     answer => {
       setUserAnswer(answer.id)
+      showCorrection(true)
       const userScore = answer.isCorrect ? 1 : 0
       dispatch(updateCurrentUser({ score: getOr(0, 'score', currentUser) + userScore }))
     }, [currentUser])
@@ -92,6 +94,12 @@ const Quiz = ({ history }) => {
       setUserAnswer(undefined)
       showAnecdote(false)
     }
+  }
+
+  const goAnecdote = () => {
+    showAnecdote(true)
+    dispatch(updateCurrentQuiz({ timeIsOver: false }))
+    showCorrection(false)
   }
 
   const goResults = () => history.push(getPath('results'))
@@ -110,6 +118,14 @@ const Quiz = ({ history }) => {
     })
   }, [])
 
+  useEffect(() => {
+    if (get('timeIsOver', quiz)) {
+      setUserAnswer(undefined)
+      showCorrection(true)
+      dispatch(updateCurrentUser({ score: getOr(0, 'score', currentUser) + 0 }))
+    }
+  }, [quiz])
+
   const showResults = get('currentQuestionNb', quiz) === size(get('questions', quiz))
   return (
     <StyledQuiz>
@@ -121,11 +137,11 @@ const Quiz = ({ history }) => {
             {anecdote ? (
               <Anecdote currentQuestion={currentQuestion} />
             ) : (
-              <Question onAnswerClick={onAnswerClick} quiz={quiz} currentQuestion={currentQuestion} userAnswer={userAnswer} />
+              <Question onAnswerClick={onAnswerClick} quiz={quiz} currentQuestion={currentQuestion} userAnswer={userAnswer} showCorrection={correction} />
             )}
-            {!anecdote && userAnswer && <StyledNextButton onClick={() => showAnecdote(true)}>Suite <ArrowRightIcon /></StyledNextButton>}
-            {anecdote && userAnswer && !showResults && <StyledNextButton onClick={nextQuestion}>Question suivante <ArrowRightIcon /></StyledNextButton>}
-            {anecdote && userAnswer && showResults && <StyledNextButton onClick={goResults}>Résultats <ArrowRightIcon /></StyledNextButton>}
+            {!anecdote && correction && <StyledNextButton onClick={goAnecdote}>Suite <ArrowRightIcon /></StyledNextButton>}
+            {anecdote && !showResults && <StyledNextButton onClick={nextQuestion}>Question suivante <ArrowRightIcon /></StyledNextButton>}
+            {anecdote && showResults && <StyledNextButton onClick={goResults}>Résultats <ArrowRightIcon /></StyledNextButton>}
           </StyledWrapper>
         </StyledQuestion>
       ) : <Loader />}

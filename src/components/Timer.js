@@ -5,7 +5,7 @@ import { COLORS } from '../helpers/theme'
 import { dispatch } from '../services/store'
 import { updateCurrentQuiz } from '../actions/quiz'
 
-const MAX_SECOND = 30
+const MAX_SECOND = 15
 
 const StyledTimer = styled.div`
   width: 40%;
@@ -28,12 +28,14 @@ const Timer = () => {
   const [ progress, setProgress ] = useState(MAX_SECOND)
 
   useEffect(() => {
+    let timeout
     if (progress > 0) {
-      setTimeout(() => setProgress(progress - 1), 1000)
+      timeout = setTimeout(() => setProgress(progress - 1), 1000)
     } else {
       setProgress(0)
       dispatch(updateCurrentQuiz({ timeIsOver: true }))
     }
+    return () =>  clearTimeout(timeout)
   }, [progress])
   
   return (

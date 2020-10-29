@@ -32,14 +32,14 @@ const StyledAnswers = styled.ul`
   list-style-type: none;
 `
 
-const Question = ({ onAnswerClick, quiz, currentQuestion, userAnswer }) => 
+const Question = ({ onAnswerClick, quiz, currentQuestion, userAnswer, showCorrection }) => 
   <>
     <StyledQuestionNumber>{get('currentQuestionNb', quiz)} / {size(get('questions', quiz))}</StyledQuestionNumber>
     <StyledQuestion>{get('title', currentQuestion)}</StyledQuestion>
     <StyledImage src={get('picture', currentQuestion)} alt="Illustration de la question" />
     <StyledAnswers>
       {map(answer => 
-        <Answer key={get('id', answer)} answer={answer} userAnswer={userAnswer} onAnswerClick={onAnswerClick} />
+        <Answer key={get('id', answer)} answer={answer} userAnswer={userAnswer} onAnswerClick={onAnswerClick} showCorrection={showCorrection} />
       , get('answers', currentQuestion))}
     </StyledAnswers>
   </>
