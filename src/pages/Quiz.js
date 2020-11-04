@@ -130,7 +130,7 @@ const Quiz = ({ history }) => {
       <Header />
       {currentQuestion ? (
         <StyledQuestion>
-          {!anecdote && <Timer />}
+          {!anecdote && <Timer stop={!anecdote && correction} />}
           <StyledWrapper>
             {anecdote ? (
               <Anecdote currentQuestion={currentQuestion} />
