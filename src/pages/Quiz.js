@@ -19,6 +19,8 @@ import ArrowRightIcon from '@material-ui/icons/ArrowRight'
 import { dispatch } from '../services/store'
 import { updateCurrentUser } from '../actions/currentUser'
 import { updateCurrentQuiz } from '../actions/quiz'
+import { getQuiz, getAllQuestions } from '../selectors/quiz'
+import { getCurrentUser } from '../selectors/currentUser'
 
 const TOTAL_QUESTIONS = 10
 
@@ -72,8 +74,9 @@ const Quiz = ({ history }) => {
   const [ correction, showCorrection ] = useState(false)
   const [ anecdote, showAnecdote ] = useState(false)
 
-  const currentUser = useSelector(state => state.currentUser)
-  const quiz = useSelector(state => state.quiz)
+  const currentUser = useSelector(getCurrentUser)
+  const quiz = useSelector(getQuiz)
+  const allQuestions = useSelector(getAllQuestions)
 
   const onAnswerClick = useCallback(
     answer => {
@@ -103,7 +106,7 @@ const Quiz = ({ history }) => {
   const goResults = () => history.push(getPath('results'))
 
   useEffect(() => {
-    const sortedQuestion = shuffle(take(TOTAL_QUESTIONS, get('allQuestions', quiz)))
+    const sortedQuestion = shuffle(take(TOTAL_QUESTIONS, allQuestions))
     const quizData = {
       questions: sortedQuestion,
       currentQuestionNb: 1,
