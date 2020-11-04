@@ -114,7 +114,7 @@ const Quiz = ({ history }) => {
     }
     setCurrentQuestion(head(sortedQuestion))
     quizData && dispatch(updateCurrentQuiz(quizData))
-  }, [])
+  }, [allQuestions])
 
   useEffect(() => {
     if (get('timeIsOver', quiz)) {
