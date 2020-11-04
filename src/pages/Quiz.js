@@ -19,8 +19,6 @@ import ArrowRightIcon from '@material-ui/icons/ArrowRight'
 import { dispatch } from '../services/store'
 import { updateCurrentUser } from '../actions/currentUser'
 import { updateCurrentQuiz } from '../actions/quiz'
-import { QUIZ_API_URL } from '../services/api'
-import axios from 'axios'
 
 const TOTAL_QUESTIONS = 10
 
@@ -105,17 +103,14 @@ const Quiz = ({ history }) => {
   const goResults = () => history.push(getPath('results'))
 
   useEffect(() => {
-    axios.get(QUIZ_API_URL).then(res => {
-      const results = get('data', res)
-      const sortedQuestion = shuffle(take(TOTAL_QUESTIONS, results))
-      const quizData = {
-        questions: sortedQuestion,
-        currentQuestionNb: 1,
-        timeIsOver: false
-      }
-      setCurrentQuestion(head(sortedQuestion))
-      quizData && dispatch(updateCurrentQuiz(quizData))
-    })
+    const sortedQuestion = shuffle(take(TOTAL_QUESTIONS, get('allQuestions', quiz)))
+    const quizData = {
+      questions: sortedQuestion,
+      currentQuestionNb: 1,
+      timeIsOver: false
+    }
+    setCurrentQuestion(head(sortedQuestion))
+    quizData && dispatch(updateCurrentQuiz(quizData))
   }, [])
 
   useEffect(() => {

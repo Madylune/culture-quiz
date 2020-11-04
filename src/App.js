@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useSelector } from 'react-redux'
 import {
   Route,
@@ -11,6 +11,7 @@ import Home from './pages/Home'
 import Quiz from './pages/Quiz'
 import Results from './pages/Results'
 import isEmpty from 'lodash/fp/isEmpty'
+import { fetchQuestionsFromAPI } from './services/api'
 
 const PrivateRoute = ({ component: Component, currentUser, ...rest }) =>
   <Route 
@@ -23,6 +24,14 @@ const PrivateRoute = ({ component: Component, currentUser, ...rest }) =>
 
 function App() {
   const currentUser = useSelector(state => state.currentUser)
+
+  useEffect(() => {
+    async function fetchData() {
+      await fetchQuestionsFromAPI()
+    }
+    fetchData()
+  }, [])
+
   return (
     <Router>
       <Switch>
