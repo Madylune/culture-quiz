@@ -50,6 +50,7 @@ const StyledWrapper = styled.div`
   @media (max-width: ${BREAKPOINTS.sm}) {
     width: 90%;
     min-height: 560px;
+    margin: 0px auto;
   }
 `
 

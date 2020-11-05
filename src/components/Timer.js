@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import Slider from '@material-ui/core/Slider'
-import { COLORS } from '../helpers/theme'
+import { COLORS, BREAKPOINTS } from '../helpers/theme'
 import { dispatch } from '../services/store'
 import { updateCurrentQuiz } from '../actions/quiz'
 
@@ -10,6 +10,11 @@ const MAX_SECOND = 30
 const StyledTimer = styled.div`
   width: 40%;
   margin: 50px auto 20px;
+
+  @media (max-width: ${BREAKPOINTS.sm}) {
+    width: 70%;
+    margin: auto;
+  }
 `
 
 const StyledSlider = styled(Slider)`
