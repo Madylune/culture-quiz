@@ -114,6 +114,7 @@ const Quiz = ({ history }) => {
     }
     setCurrentQuestion(head(sortedQuestion))
     quizData && dispatch(updateCurrentQuiz(quizData))
+    dispatch(updateCurrentUser({ score: 0 }))
   }, [allQuestions])
 
   useEffect(() => {

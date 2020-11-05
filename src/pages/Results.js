@@ -9,6 +9,8 @@ import getOr from 'lodash/fp/getOr'
 import size from 'lodash/fp/size'
 import { BREAKPOINTS, COLORS } from '../helpers/theme'
 import { getPath } from '../helpers/routes'
+import { dispatch } from '../services/store'
+import { updateCurrentUser } from '../actions/currentUser'
 
 const StyledCertificate = styled.div`
   width: 40%;
@@ -74,6 +76,10 @@ const getGrading = score => {
 const Results = ({ history }) => {
   const currentUser = useSelector(state => state.currentUser)
   const quiz = useSelector(state => state.quiz)
+  const quitQuiz = () => {
+    dispatch(updateCurrentUser({ score: 0 }))
+    history.push(getPath('quiz'))
+  }
   return (
     <>
       <Header />
@@ -84,7 +90,7 @@ const Results = ({ history }) => {
           <StyledSubtitle isBad={getOr(0, 'score', currentUser) < 5}>{getGrading(getOr(0, 'score', currentUser))}</StyledSubtitle>
         </StyledContent>
       </StyledCertificate>
-      <Button onClick={() => history.push(getPath('quiz'))}>Relancer un quiz</Button>
+      <Button onClick={quitQuiz}>Relancer un quiz</Button>
     </>
   )
 }
