@@ -36,7 +36,7 @@ function App() {
     <Router>
       <Switch>
         <Route exact path={getPath('home')} component={Home}></Route>
-        <Route path={getPath('quiz')} component={Quiz}></Route>
+        <PrivateRoute path={getPath('quiz')} currentUser={currentUser} component={Quiz}></PrivateRoute>
         <PrivateRoute path={getPath('results')} currentUser={currentUser} component={Results}></PrivateRoute>
       </Switch>
     </Router>
