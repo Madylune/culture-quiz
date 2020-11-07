@@ -1,0 +1,23 @@
+{
+  "files": {
+    "main.css": "/culture-quiz/static/css/main.5ecd60fb.chunk.css",
+    "main.js": "/culture-quiz/static/js/main.f9c0313e.chunk.js",
+    "main.js.map": "/culture-quiz/static/js/main.f9c0313e.chunk.js.map",
+    "runtime-main.js": "/culture-quiz/static/js/runtime-main.b7372fcf.js",
+    "runtime-main.js.map": "/culture-quiz/static/js/runtime-main.b7372fcf.js.map",
+    "static/js/2.aa74e5fd.chunk.js": "/culture-quiz/static/js/2.aa74e5fd.chunk.js",
+    "static/js/2.aa74e5fd.chunk.js.map": "/culture-quiz/static/js/2.aa74e5fd.chunk.js.map",
+    "index.html": "/culture-quiz/index.html",
+    "precache-manifest.321db897f04e34da5588d0d163fa7861.js": "/culture-quiz/precache-manifest.321db897f04e34da5588d0d163fa7861.js",
+    "service-worker.js": "/culture-quiz/service-worker.js",
+    "static/css/main.5ecd60fb.chunk.css.map": "/culture-quiz/static/css/main.5ecd60fb.chunk.css.map",
+    "static/js/2.aa74e5fd.chunk.js.LICENSE.txt": "/culture-quiz/static/js/2.aa74e5fd.chunk.js.LICENSE.txt",
+    "static/media/certificate.png": "/culture-quiz/static/media/certificate.30085cf1.png"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.b7372fcf.js",
+    "static/js/2.aa74e5fd.chunk.js",
+    "static/css/main.5ecd60fb.chunk.css",
+    "static/js/main.f9c0313e.chunk.js"
+  ]
+}
