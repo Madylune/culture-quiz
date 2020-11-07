@@ -25,6 +25,9 @@ const StyledImage = styled.img`
   @media (max-width: ${BREAKPOINTS.sm}) {
     max-height: 200px;
   }
+  @media (max-width: ${BREAKPOINTS.xs}) {
+    max-height: 100px;
+  }
 `
 
 const StyledAnswers = styled.ul`

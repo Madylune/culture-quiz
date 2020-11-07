@@ -3,11 +3,12 @@ import { withRouter } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import styled from 'styled-components'
 import Header from '../components/Header'
+import Footer from '../components/Footer'
 import Question from '../components/Question'
 import Anecdote from '../components/Anecdote'
 import Loader from '../components/Loader'
 import Timer from '../components/Timer'
-import { BREAKPOINTS } from '../helpers/theme'
+import { BREAKPOINTS, COLORS } from '../helpers/theme'
 import { getPath } from '../helpers/routes'
 import get from 'lodash/fp/get'
 import getOr from 'lodash/fp/getOr'
@@ -21,6 +22,7 @@ import { updateCurrentUser } from '../actions/currentUser'
 import { updateCurrentQuiz } from '../actions/quiz'
 import { getQuiz, getAllQuestions } from '../selectors/quiz'
 import { getCurrentUser } from '../selectors/currentUser'
+import { getCorrectAnswer } from '../helpers/utils'
 
 const TOTAL_QUESTIONS = 10
 
@@ -49,7 +51,7 @@ const StyledWrapper = styled.div`
 
   @media (max-width: ${BREAKPOINTS.sm}) {
     width: 90%;
-    min-height: 560px;
+    min-height: 450px;
     margin: 0px auto;
   }
 `
@@ -66,6 +68,20 @@ const StyledNextButton = styled.div`
   @keyframes back-and-forth {
     from { transform: translateX(0px); }
     to { transform: translateX(-10px); }
+  }
+`
+
+const StyledComment = styled.div`
+  width: 40%;
+  margin: 50px auto 20px;
+  font-size: 20px;
+  font-weight: bold;
+  text-align: center;
+  color: ${props => props.isCorrect ? COLORS.green : COLORS.red};
+
+  @media (max-width: ${BREAKPOINTS.sm}) {
+    width: 70%;
+    margin: 10px auto;
   }
 `
 
@@ -127,12 +143,16 @@ const Quiz = ({ history }) => {
   }, [quiz])
 
   const showResults = get('currentQuestionNb', quiz) === size(get('questions', quiz))
+  const correctAnswer = getCorrectAnswer(get('answers', currentQuestion))
+  const isCorrectAnswer = get('id', correctAnswer) === userAnswer
+
   return (
     <StyledQuiz>
-      <Header />
+      <Header hide={true} />
       {currentQuestion ? (
         <StyledQuestion>
           {!anecdote && <Timer stop={!anecdote && correction} />}
+          {anecdote && <StyledComment isCorrect={isCorrectAnswer}>{isCorrectAnswer ? "Bonne réponse !" : "Mauvaise réponse !"}</StyledComment>}
           <StyledWrapper>
             {anecdote ? (
               <Anecdote currentQuestion={currentQuestion} />
@@ -145,6 +165,7 @@ const Quiz = ({ history }) => {
           </StyledWrapper>
         </StyledQuestion>
       ) : <Loader />}
+      <Footer />
     </StyledQuiz>
   )
 }

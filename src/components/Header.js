@@ -11,6 +11,10 @@ const StyledHeader = styled.header`
     height: 150px;
     text-align: center;
   }
+
+  @media (max-width: ${BREAKPOINTS.xs}) {
+    display: ${props => props.hide ? 'none' : undefined};
+  }
 `
 
 const StyledLogo = styled.img`
@@ -18,8 +22,8 @@ const StyledLogo = styled.img`
   cursor: pointer;
 `
 
-const Header = ({ history }) => 
-  <StyledHeader>
+const Header = ({ history, hide }) => 
+  <StyledHeader hide={hide}>
     <StyledLogo src={require('../assets/culture_quiz_logo.png')} alt="logo" onClick={() => history.push(getPath('home'))} />
   </StyledHeader>
 

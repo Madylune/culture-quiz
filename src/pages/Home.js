@@ -2,6 +2,7 @@ import React from 'react'
 import { withRouter } from 'react-router-dom'
 import styled from 'styled-components'
 import Header from '../components/Header'
+import Footer from '../components/Footer'
 import Button from '../components/Button'
 import { getPath } from '../helpers/routes'
 import { BREAKPOINTS } from '../helpers/theme'
@@ -47,6 +48,7 @@ const Home = ({ history }) => {
         </h1>
       </StyledText>
       <Button onClick={startQuiz}>Lancer le quiz</Button>
+      <Footer />
     </>
   )
 }

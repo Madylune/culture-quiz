@@ -3,6 +3,7 @@ import { withRouter } from 'react-router-dom'
 import styled from 'styled-components'
 import { useSelector } from 'react-redux'
 import Header from '../components/Header'
+import Footer from '../components/Footer'
 import Button from '../components/Button'
 import get from 'lodash/fp/get'
 import getOr from 'lodash/fp/getOr'
@@ -91,6 +92,7 @@ const Results = ({ history }) => {
         </StyledContent>
       </StyledCertificate>
       <Button onClick={quitQuiz}>Relancer un quiz</Button>
+      <Footer />
     </>
   )
 }

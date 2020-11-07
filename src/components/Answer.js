@@ -9,8 +9,7 @@ const StyledAnswer = styled.li`
   font-size: 18px;
   margin: 15px auto;
   height: 50px;
-  min-width: 40%;
-  max-width: 75%;
+  width: 70%;
   border-radius: 40px;
   display: flex;
   align-items: center;
@@ -27,7 +26,7 @@ const StyledAnswer = styled.li`
     margin: 10px auto;
     font-size: 16px;
     height: 40px;
-    width: 90%;
+    width: 100%;
   }
 `
 

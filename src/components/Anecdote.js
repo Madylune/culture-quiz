@@ -10,6 +10,9 @@ const StyledAnecdote = styled.div`
 const StyledImage = styled.img`
   max-height: 250px;
   max-width: 80%;
+  @media (max-width: ${BREAKPOINTS.sm}) {
+    max-height: 150px;
+  }
 `
 
 const StyledTitle = styled.h2`
@@ -18,7 +21,7 @@ const StyledTitle = styled.h2`
   margin: 20px auto;
 
   @media (max-width: ${BREAKPOINTS.sm}) {
-    font-size: 20px;
+    font-size: 16px;
   }
 `
 
