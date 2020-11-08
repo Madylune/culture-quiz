@@ -25,9 +25,10 @@
     "build": "react-scripts build",
     "test": "CI=true react-scripts test",
     "eject": "react-scripts eject",
+    "lint": "eslint src",
+    "pre-commit": "npm run lint && npm run test",
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d build",
-    "lint": "eslint src"
+    "deploy": "gh-pages -d build"
   },
   "husky": {
     "hooks": {
