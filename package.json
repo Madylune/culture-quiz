@@ -31,8 +31,8 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "echo \"[Husky] pre-commit\"",
-      "pre-push": "npm run test"
+      "pre-commit": "npm run lint && npm run test",
+      "pre-push": "npm run lint && npm run test"
     }
   },
   "eslintConfig": {
@@ -52,6 +52,6 @@
   },
   "devDependencies": {
     "cross-env": "7.0.2",
-    "husky": "^4.3.0"
+    "husky": "4.3.0"
   }
 }
