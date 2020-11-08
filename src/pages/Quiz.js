@@ -95,13 +95,18 @@ const Quiz = ({ history }) => {
   const quiz = useSelector(getQuiz)
   const allQuestions = useSelector(getAllQuestions)
 
+  const updateUserScore = useCallback(
+    amount => dispatch(updateCurrentUser({ score: getOr(0, 'score', currentUser) + amount }))
+    ,[currentUser]
+  )
+
   const onAnswerClick = useCallback(
     answer => {
       setUserAnswer(answer.id)
       showCorrection(true)
       const userScore = answer.isCorrect ? 1 : 0
-      dispatch(updateCurrentUser({ score: getOr(0, 'score', currentUser) + userScore }))
-    }, [currentUser])
+      updateUserScore(userScore)
+    }, [updateUserScore])
 
   const nextQuestion = () => {
     dispatch(updateCurrentQuiz({ currentQuestionNb: get('currentQuestionNb', quiz) + 1 }))
@@ -131,15 +136,17 @@ const Quiz = ({ history }) => {
     }
     setCurrentQuestion(head(sortedQuestion))
     quizData && dispatch(updateCurrentQuiz(quizData))
-    dispatch(updateCurrentUser({ score: 0 }))
-  }, [allQuestions])
+    updateUserScore(0)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   useEffect(() => {
     if (get('timeIsOver', quiz)) {
       setUserAnswer(undefined)
       showCorrection(true)
-      dispatch(updateCurrentUser({ score: getOr(0, 'score', currentUser) + 0 }))
+      updateUserScore(0)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [quiz])
 
   const showResults = get('currentQuestionNb', quiz) === size(get('questions', quiz))
